@@ -14,3 +14,134 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <style>
+        .loader-text { color: #94a3b8; margin-top: 15px; font-size: 0.9rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+    </style>
+</head>
+    <!-- Preloader -->
+    <div class="loader-container" id="preloader">
+        <div class="loader-logo"><i class="fas fa-cube"></i> AmkyawDev</div>
+        <div class="loader-spinner"></div>
+        <div class="loader-progress"><div class="loader-progress-bar" id="progress-bar"></div></div>
+        <div class="loader-text" id="loader-text">Loading...</div>
+    </div>
+
+<body x-data="templates()" x-init="loadTemplates()">
+    <div id="3d-background"></div>
+    
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo"><img src="assets/images/logo/logo.png" alt="AmkyawDev"></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="web-template.html" class="active">Templates</a></li>
+                <li><a href="project.html">Projects</a></li>
+                <li><a href="docs.html">Docs</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html" class="btn-login">Login</a></li>
+                <li><a href="register.html" class="btn-register">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>Web Templates</h1>
+            <p>Premium website templates with stunning 3D effects</p>
+        </div>
+    </section>
+
+    <section class="templates-section">
+        <div class="container">
+            <!-- Filters -->
+            <div class="filters" x-data="{ category: 'all', search: '' }">
+                <div class="search-box">
+                    <input type="text" x-model="search" placeholder="Search templates...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="category-filters">
+                    <button class="filter-btn" :class="{ 'active': category === 'all' }" @click="category = 'all'">All</button>
+                    <button class="filter-btn" :class="{ 'active': category === 'portfolio' }" @click="category = 'portfolio'">Portfolio</button>
+                    <button class="filter-btn" :class="{ 'active': category === 'ecommerce' }" @click="category = 'ecommerce'">Ecommerce</button>
+                    <button class="filter-btn" :class="{ 'active': category === 'blog' }" @click="category = 'blog'">Blog</button>
+                    <button class="filter-btn" :class="{ 'active': category === 'business' }" @click="category = 'business'">Business</button>
+                </div>
+            </div>
+
+            <!-- Templates Grid -->
+            <div class="templates-grid" id="templates-container">
+                <template x-for="template in filteredTemplates" :key="template.id">
+                    <div class="template-card" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
+                        <div class="template-image">
+                            <img :src="template.image" :alt="template.name">
+                            <div class="template-overlay" x-show="hover">
+                                <a :href="template.demoUrl" target="_blank" class="btn btn-outline">View Demo</a>
+                            </div>
+                        </div>
+                        <div class="template-info">
+                            <span class="category" x-text="template.category"></span>
+                            <h3 x-text="template.name"></h3>
+                            <p x-text="template.description"></p>
+                            <div class="template-features">
+                                <template x-for="feature in template.features" :key="feature">
+                                    <span class="feature-tag" x-text="feature"></span>
+                                </template>
+                            </div>
+                            <div class="template-footer">
+                                <span class="price">$<span x-text="template.price"></span></span>
+                                <button class="btn btn-primary" @click="downloadTemplate(template.id)">
+                                    <i class="fas fa-download"></i> Download
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <h2>Custom Template?</h2>
+            <p>Need a custom website template? Let's discuss it</p>
+            <a href="contact.html" class="btn btn-primary">Contact Us</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 AmkyawDev. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="config/firebase-config.js"></script>
+    <script src="assets/js/3d/three.js"></script>
+    <script src="assets/js/3d/card-3d.js"></script>
+    <script src="assets/js/utils/api.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const preloader = document.getElementById("preloader");
+        const progressBar = document.getElementById("progress-bar");
+        const loaderText = document.getElementById("loader-text");
+        const msgs = ["Loading...", "Preparing...", "Almost ready..."];
+        let progress = 0;
+        setInterval(function() {
+            progress++;
+            progressBar.style.width = progress + "%";
+            if(progress===30) loaderText.textContent=msgs[1];
+            if(progress===60) loaderText.textContent=msgs[2];
+            if(progress>=100) {
+                clearInterval(this);
+                setTimeout(function(){ preloader.classList.add("hidden"); setTimeout(function(){preloader.style.display="none"},500); },300);
+            }
+        },30);
+    });
+    </script>
+    <script src="assets/js/3d/smooth-scroll.js"></script>
+</body>
+</html>

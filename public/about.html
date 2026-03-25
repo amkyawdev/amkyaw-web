@@ -14,3 +14,176 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <style>
+        .loader-text { color: #94a3b8; margin-top: 15px; font-size: 0.9rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+    </style>
+</head>
+<body x-data="appData()">
+    <!-- Preloader -->
+    <div class="loader-container" id="preloader">
+        <div class="loader-logo"><i class="fas fa-cube"></i> AmkyawDev</div>
+        <div class="loader-spinner"></div>
+        <div class="loader-progress"><div class="loader-progress-bar" id="progress-bar"></div></div>
+        <div class="loader-text" id="loader-text">Loading...</div>
+    </div>
+
+    <div id="3d-background"></div>
+    
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo"><img src="assets/images/logo/logo.png" alt="AmkyawDev"></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html" class="active">About</a></li>
+                <li><a href="web-template.html">Templates</a></li>
+                <li><a href="project.html">Projects</a></li>
+                <li><a href="docs.html">Docs</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html" class="btn-login">Login</a></li>
+                <li><a href="register.html" class="btn-register">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>About Me</h1>
+            <p>Learn more about my journey in web development</p>
+        </div>
+    </section>
+
+    <section class="about-content">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-image">
+                    <div class="image-frame">
+                        <img src="assets/images/avatars/profile.svg" alt="AmkyawDev">
+                    </div>
+                </div>
+                <div class="about-text">
+                    <h2>Hi, I'm AmkyawDev</h2>
+                    <p class="lead">A passionate web developer specializing in modern web technologies</p>
+                    <p>With over 5 years of experience in web development, I specialize in creating stunning, interactive websites using the latest technologies including Three.js for 3D effects, Alpine.js for reactivity, and modern CSS frameworks.</p>
+                    <div class="skills">
+                        <h3>Skills</h3>
+                        <div class="skill-tags">
+                            <span class="skill-tag">JavaScript</span>
+                            <span class="skill-tag">React</span>
+                            <span class="skill-tag">Node.js</span>
+                            <span class="skill-tag">Three.js</span>
+                            <span class="skill-tag">Alpine.js</span>
+                            <span class="skill-tag">Firebase</span>
+                            <span class="skill-tag">HTML5/CSS3</span>
+                            <span class="skill-tag">UI/UX Design</span>
+                        </div>
+                    </div>
+                    <div class="about-stats">
+                        <div class="stat">
+                            <span class="stat-number">150+</span>
+                            <span class="stat-label">Projects</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">50+</span>
+                            <span class="stat-label">Clients</span>
+                        </div>
+                        <div class="stat">
+                            <span class="stat-number">5+</span>
+                            <span class="stat-label">Years</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="timeline">
+        <div class="container">
+            <h2 class="section-title">My Journey</h2>
+            <div class="timeline-container">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>2019</h3>
+                        <h4>Started Web Development</h4>
+                        <p>Began my journey in web development with HTML, CSS, and JavaScript</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>2020</h3>
+                        <h4>Learned Modern Frameworks</h4>
+                        <p>Mastered React, Vue.js, and Node.js</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>2021</h3>
+                        <h4>Started Freelancing</h4>
+                        <p>Began offering web development services to clients</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>2022</h3>
+                        <h4>3D & Animation Expert</h4>
+                        <p>Specialized in Three.js and advanced animations</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h3>2024</h3>
+                        <h4>Full-Stack Developer</h4>
+                        <p>Offering comprehensive web solutions</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <div class="container">
+            <h2>Let's Work Together</h2>
+            <p>Have a project in mind? Let's discuss it</p>
+            <a href="contact.html" class="btn btn-primary">Contact Me</a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 AmkyawDev. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="config/firebase-config.js"></script>
+    <script src="assets/js/3d/three.js"></script>
+    <script src="assets/js/3d/card-3d.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const preloader = document.getElementById("preloader");
+        const progressBar = document.getElementById("progress-bar");
+        const loaderText = document.getElementById("loader-text");
+        const msgs = ["Loading...", "Preparing...", "Almost ready..."];
+        let progress = 0;
+        setInterval(function() {
+            progress++;
+            progressBar.style.width = progress + "%";
+            if(progress===30) loaderText.textContent=msgs[1];
+            if(progress===60) loaderText.textContent=msgs[2];
+            if(progress>=100) {
+                clearInterval(this);
+                setTimeout(function(){ preloader.classList.add("hidden"); setTimeout(function(){preloader.style.display="none"},500); },300);
+            }
+        },30);
+    });
+    </script>
+    <script src="assets/js/3d/smooth-scroll.js"></script>
+</body>
+</html>

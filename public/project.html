@@ -14,3 +14,114 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <style>
+        .loader-text { color: #94a3b8; margin-top: 15px; font-size: 0.9rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+    </style>
+</head>
+    <!-- Preloader -->
+    <div class="loader-container" id="preloader">
+        <div class="loader-logo"><i class="fas fa-cube"></i> AmkyawDev</div>
+        <div class="loader-spinner"></div>
+        <div class="loader-progress"><div class="loader-progress-bar" id="progress-bar"></div></div>
+        <div class="loader-text" id="loader-text">Loading...</div>
+    </div>
+
+<body x-data="projects()" x-init="loadProjects()">
+    <div id="3d-background"></div>
+    
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo"><img src="assets/images/logo/logo.png" alt="AmkyawDev"></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="web-template.html">Templates</a></li>
+                <li><a href="project.html" class="active">Projects</a></li>
+                <li><a href="docs.html">Docs</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="login.html" class="btn-login">Login</a></li>
+                <li><a href="register.html" class="btn-register">Register</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>Our Projects</h1>
+            <p>Showcasing our recent work and client success stories</p>
+        </div>
+    </section>
+
+    <section class="projects-section">
+        <div class="container">
+            <div class="filters" x-data="{ status: 'all' }">
+                <div class="category-filters">
+                    <button class="filter-btn" :class="{ 'active': status === 'all' }" @click="status = 'all'">All</button>
+                    <button class="filter-btn" :class="{ 'active': status === 'completed' }" @click="status = 'completed'">Completed</button>
+                    <button class="filter-btn" :class="{ 'active': status === 'in-progress' }" @click="status = 'in-progress'">In Progress</button>
+                </div>
+            </div>
+
+            <div class="projects-grid" id="projects-container">
+                <template x-for="project in projects" :key="project.id">
+                    <div class="project-card">
+                        <div class="project-image">
+                            <img :src="project.image" :alt="project.name">
+                            <div class="project-status" :class="project.status" x-text="project.status"></div>
+                        </div>
+                        <div class="project-info">
+                            <span class="category" x-text="project.category"></span>
+                            <h3 x-text="project.name"></h3>
+                            <p class="client">Client: <span x-text="project.client"></span></p>
+                            <div class="technologies">
+                                <template x-for="tech in project.technologies" :key="tech">
+                                    <span class="tech-tag" x-text="tech"></span>
+                                </template>
+                            </div>
+                            <div class="project-footer">
+                                <span class="price">$<span x-text="project.price"></span></span>
+                                <span class="date"><i class="fas fa-calendar"></i> <span x-text="project.completionDate"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 AmkyawDev. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="config/firebase-config.js"></script>
+    <script src="assets/js/3d/three.js"></script>
+    <script src="assets/js/3d/card-3d.js"></script>
+    <script src="assets/js/utils/api.js"></script>
+    <script src="assets/js/main.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const preloader = document.getElementById("preloader");
+        const progressBar = document.getElementById("progress-bar");
+        const loaderText = document.getElementById("loader-text");
+        const msgs = ["Loading...", "Preparing...", "Almost ready..."];
+        let progress = 0;
+        setInterval(function() {
+            progress++;
+            progressBar.style.width = progress + "%";
+            if(progress===30) loaderText.textContent=msgs[1];
+            if(progress===60) loaderText.textContent=msgs[2];
+            if(progress>=100) {
+                clearInterval(this);
+                setTimeout(function(){ preloader.classList.add("hidden"); setTimeout(function(){preloader.style.display="none"},500); },300);
+            }
+        },30);
+    });
+    </script>
+    <script src="assets/js/3d/smooth-scroll.js"></script>
+</body>
+</html>
