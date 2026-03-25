@@ -13,7 +13,26 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <style>
+        .loader-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease; }
+        .loader-container.hidden { opacity: 0; visibility: hidden; }
+        .loader-logo { font-size: 2.5rem; font-weight: bold; color: #4f46e5; margin-bottom: 30px; animation: pulse 1.5s ease-in-out infinite; }
+        .loader-spinner { width: 50px; height: 50px; border: 4px solid rgba(79,70,229,0.2); border-top-color: #4f46e5; border-radius: 50%; animation: spin 1s linear infinite; }
+        .loader-progress { width: 200px; height: 4px; background: rgba(79,70,229,0.2); border-radius: 2px; margin-top: 25px; overflow: hidden; }
+        .loader-progress-bar { height: 100%; background: linear-gradient(90deg,#4f46e5,#7c3aed); width: 0%; transition: width 0.3s ease; }
+        .loader-text { color: #94a3b8; margin-top: 15px; font-size: 0.9rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+    </style>
 </head>
+    <!-- Preloader -->
+    <div class="loader-container" id="preloader">
+        <div class="loader-logo"><i class="fas fa-cube"></i> AmkyawDev</div>
+        <div class="loader-spinner"></div>
+        <div class="loader-progress"><div class="loader-progress-bar" id="progress-bar"></div></div>
+        <div class="loader-text" id="loader-text">Loading...</div>
+    </div>
+
 <body x-data="docs()" x-init="loadDocs()">
     <div id="3d-background"></div>
     
@@ -96,5 +115,24 @@
     <script src="assets/js/3d/card-3d.js"></script>
     <script src="assets/js/utils/api.js"></script>
     <script src="assets/js/main.js"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const preloader = document.getElementById("preloader");
+        const progressBar = document.getElementById("progress-bar");
+        const loaderText = document.getElementById("loader-text");
+        const msgs = ["Loading...", "Preparing...", "Almost ready..."];
+        let progress = 0;
+        setInterval(function() {
+            progress++;
+            progressBar.style.width = progress + "%";
+            if(progress===30) loaderText.textContent=msgs[1];
+            if(progress===60) loaderText.textContent=msgs[2];
+            if(progress>=100) {
+                clearInterval(this);
+                setTimeout(function(){ preloader.classList.add("hidden"); setTimeout(function(){preloader.style.display="none"},500); },300);
+            }
+        },30);
+    });
+    </script>
 </body>
 </html>
