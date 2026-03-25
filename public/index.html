@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AmkyawDev - Professional Web Development Services</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/3d-effects.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+</head>
+<body x-data="appData()">
+    <!-- 3D Background -->
+    <div id="3d-background"></div>
+    
+    <!-- Navigation -->
+    <nav class="navbar" x-data="{ mobileMenuOpen: false }">
+        <div class="container">
+            <a href="index.html" class="logo">
+                <img src="assets/images/logo/logo.png" alt="AmkyawDev">
+            </a>
+            <button class="mobile-toggle" @click="mobileMenuOpen = !mobileMenuOpen">
+                <i class="fas" :class="mobileMenuOpen ? 'fa-times' : 'fa-bars'"></i>
+            </button>
+            <ul class="nav-links" :class="{ 'active': mobileMenuOpen }">
+                <li><a href="index.html" class="active">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="web-template.html">Templates</a></li>
+                <li><a href="project.html">Projects</a></li>
+                <li><a href="docs.html">Docs</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="dashboard.html" class="btn-login">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <h1 class="hero-title" x-data="{ animate: false }" :class="{ 'animate': true }">
+                Crafting <span class="highlight">Digital Experiences</span>
+            </h1>
+            <p class="hero-subtitle">Professional web development services with stunning 3D effects and modern design</p>
+            <div class="hero-buttons">
+                <a href="web-template.html" class="btn btn-primary">View Templates</a>
+                <a href="contact.html" class="btn btn-secondary">Get Started</a>
+            </div>
+        </div>
+        <div class="hero-3d-card" id="hero-card">
+            <div class="card-content">
+                <i class="fas fa-laptop-code"></i>
+                <h3>Modern Web Solutions</h3>
+                <p>Responsive & Interactive</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose Us</h2>
+            <div class="features-grid">
+                <div class="feature-card" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
+                    <div class="feature-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Fast Performance</h3>
+                    <p>Lightning fast websites optimized for speed</p>
+                </div>
+                <div class="feature-card" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Fully Responsive</h3>
+                    <p>Looks great on all devices</p>
+                </div>
+                <div class="feature-card" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
+                    <div class="feature-icon">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <h3>3D Effects</h3>
+                    <p>Stunning Three.js animations</p>
+                </div>
+                <div class="feature-card" x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure</h3>
+                    <p>Enterprise-grade security</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Templates Preview -->
+    <section class="templates-preview" id="templates">
+        <div class="container">
+            <h2 class="section-title">Popular Templates</h2>
+            <div class="templates-grid" id="templates-grid">
+                <!-- Templates loaded dynamically -->
+            </div>
+            <div class="view-all">
+                <a href="web-template.html" class="btn btn-outline">View All Templates</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Projects Preview -->
+    <section class="projects-preview" id="projects">
+        <div class="container">
+            <h2 class="section-title">Recent Projects</h2>
+            <div class="projects-grid" id="projects-grid">
+                <!-- Projects loaded dynamically -->
+            </div>
+            <div class="view-all">
+                <a href="project.html" class="btn btn-outline">View All Projects</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats" id="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" x-data="{ count: 0 }" x-init="setInterval(() => { if(count < 150) count++ }, 20)">0</span>
+                    <span class="stat-label">Projects Completed</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" x-data="{ count: 0 }" x-init="setInterval(() => { if(count < 50) count++ }, 30)">0</span>
+                    <span class="stat-label">Happy Clients</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" x-data="{ count: 0 }" x-init="setInterval(() => { if(count < 5) count++ }, 100)">0</span>
+                    <span class="stat-label">Years Experience</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" x-data="{ count: 0 }" x-init="setInterval(() => { if(count < 24) count++ }, 50)">0</span>
+                    <span class="stat-label">Support Hours</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <h2 class="section-title">Client Reviews</h2>
+            <div class="testimonials-slider" x-data="{ current: 0, testimonials: [] }" x-init="testimonials = [
+                { name: 'John Doe', company: 'Tech Corp', text: 'Amazing work! The 3D effects are stunning.' },
+                { name: 'Jane Smith', company: 'Design Studio', text: 'Professional and timely delivery.' },
+                { name: 'Mike Johnson', company: 'Startup Inc', text: 'Highly recommended for web projects.' }
+            ]">
+                <div class="testimonial-card">
+                    <p class="testimonial-text" x-text="testimonials[current]?.text"></p>
+                    <div class="testimonial-author">
+                        <img :src="'assets/images/avatars/avatar' + (current + 1) + '.png'" alt="Client">
+                        <div>
+                            <h4 x-text="testimonials[current]?.name"></h4>
+                            <p x-text="testimonials[current]?.company"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slider-controls">
+                    <button @click="current = (current - 1 + testimonials.length) % testimonials.length">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button @click="current = (current + 1) % testimonials.length">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="container">
+            <h2>Ready to Start Your Project?</h2>
+            <p>Let's create something amazing together</p>
+            <a href="contact.html" class="btn btn-primary">Contact Us</a>
+        </div>
+    </section>
+
+    <!-- Chat Widget -->
+    <div class="chat-widget" x-data="{ open: false }">
+        <button class="chat-toggle" @click="open = !open">
+            <i class="fas" :class="open ? 'fa-times' : 'fa-comments'"></i>
+        </button>
+        <div class="chat-window" x-show="open" x-transition>
+            <div class="chat-header">
+                <h3>Chat with Us</h3>
+                <button @click="open = false"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chat-messages" id="chat-messages">
+                <div class="message bot">
+                    <p>Hello! How can we help you?</p>
+                </div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chat-input" placeholder="Type a message...">
+                <button><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h3>AmkyawDev</h3>
+                    <p>Professional web development services</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-github"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="web-template.html">Templates</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Services</h3>
+                    <ul>
+                        <li><a href="#">Web Development</a></li>
+                        <li><a href="#">UI/UX Design</a></li>
+                        <li><a href="#">3D Effects</a></li>
+                        <li><a href="#">Consulting</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> info@amkyawdev.com</li>
+                        <li><i class="fas fa-phone"></i> +1 234 567 890</li>
+                        <li><i class="fas fa-map-marker"></i> City, Country</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 AmkyawDev. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="config/firebase-config.js"></script>
+    <script src="assets/js/3d/three.js"></script>
+    <script src="assets/js/3d/card-3d.js"></script>
+    <script src="assets/js/3d/smooth-scroll.js"></script>
+    <script src="assets/js/auth/firebase-config.js"></script>
+    <script src="assets/js/auth/auth.js"></script>
+    <script src="assets/js/chat/chat-widget.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

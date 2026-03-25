@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects - AmkyawDev</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/3d-effects.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+</head>
+<body x-data="projects()" x-init="loadProjects()">
+    <div id="3d-background"></div>
+    
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo"><img src="assets/images/logo/logo.png" alt="AmkyawDev"></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="web-template.html">Templates</a></li>
+                <li><a href="project.html" class="active">Projects</a></li>
+                <li><a href="docs.html">Docs</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>Our Projects</h1>
+            <p>Showcasing our recent work and client success stories</p>
+        </div>
+    </section>
+
+    <section class="projects-section">
+        <div class="container">
+            <div class="filters" x-data="{ status: 'all' }">
+                <div class="category-filters">
+                    <button class="filter-btn" :class="{ 'active': status === 'all' }" @click="status = 'all'">All</button>
+                    <button class="filter-btn" :class="{ 'active': status === 'completed' }" @click="status = 'completed'">Completed</button>
+                    <button class="filter-btn" :class="{ 'active': status === 'in-progress' }" @click="status = 'in-progress'">In Progress</button>
+                </div>
+            </div>
+
+            <div class="projects-grid" id="projects-container">
+                <template x-for="project in projects" :key="project.id">
+                    <div class="project-card">
+                        <div class="project-image">
+                            <img :src="project.image" :alt="project.name">
+                            <div class="project-status" :class="project.status" x-text="project.status"></div>
+                        </div>
+                        <div class="project-info">
+                            <span class="category" x-text="project.category"></span>
+                            <h3 x-text="project.name"></h3>
+                            <p class="client">Client: <span x-text="project.client"></span></p>
+                            <div class="technologies">
+                                <template x-for="tech in project.technologies" :key="tech">
+                                    <span class="tech-tag" x-text="tech"></span>
+                                </template>
+                            </div>
+                            <div class="project-footer">
+                                <span class="price">$<span x-text="project.price"></span></span>
+                                <span class="date"><i class="fas fa-calendar"></i> <span x-text="project.completionDate"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 AmkyawDev. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="config/firebase-config.js"></script>
+    <script src="assets/js/3d/three.js"></script>
+    <script src="assets/js/3d/card-3d.js"></script>
+    <script src="assets/js/utils/api.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

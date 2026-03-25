@@ -1,0 +1,38 @@
+[
+  {
+    "id": 1,
+    "name": "Admin User",
+    "email": "admin@amkyawdev.com",
+    "role": "admin",
+    "avatar": "assets/images/avatars/admin.png",
+    "joinedAt": "2024-01-01",
+    "lastLogin": "2024-03-20"
+  },
+  {
+    "id": 2,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "role": "user",
+    "avatar": "assets/images/avatars/user1.png",
+    "joinedAt": "2024-01-15",
+    "lastLogin": "2024-03-18"
+  },
+  {
+    "id": 3,
+    "name": "Jane Smith",
+    "email": "jane@example.com",
+    "role": "user",
+    "avatar": "assets/images/avatars/user2.png",
+    "joinedAt": "2024-02-01",
+    "lastLogin": "2024-03-19"
+  },
+  {
+    "id": 4,
+    "name": "Mike Johnson",
+    "email": "mike@example.com",
+    "role": "user",
+    "avatar": "assets/images/avatars/user3.png",
+    "joinedAt": "2024-02-15",
+    "lastLogin": "2024-03-17"
+  }
+]

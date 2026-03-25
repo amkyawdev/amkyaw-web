@@ -1,0 +1,74 @@
+[
+  {
+    "id": 1,
+    "name": "Corporate Website Redesign",
+    "client": "Tech Corp",
+    "price": 500,
+    "image": "assets/images/projects/project1.png",
+    "category": "web development",
+    "description": "Complete redesign of corporate website with modern UI/UX and 3D elements.",
+    "technologies": ["React", "Node.js", "MongoDB", "Three.js"],
+    "completionDate": "2024-02-01",
+    "status": "completed"
+  },
+  {
+    "id": 2,
+    "name": "E-commerce Platform",
+    "client": "ShopEasy",
+    "price": 1200,
+    "image": "assets/images/projects/project2.png",
+    "category": "web development",
+    "description": "Full-featured e-commerce platform with payment processing and inventory management.",
+    "technologies": ["Vue.js", "Express", "PostgreSQL", "Stripe"],
+    "completionDate": "2024-02-20",
+    "status": "completed"
+  },
+  {
+    "id": 3,
+    "name": "Portfolio Website",
+    "client": "Creative Studio",
+    "price": 300,
+    "image": "assets/images/projects/project3.png",
+    "category": "web development",
+    "description": "Creative portfolio website with 3D gallery and smooth animations.",
+    "technologies": ["Three.js", "Alpine.js", "GSAP"],
+    "completionDate": "2024-03-05",
+    "status": "completed"
+  },
+  {
+    "id": 4,
+    "name": "Mobile App UI",
+    "client": "FinanceHub",
+    "price": 800,
+    "image": "assets/images/projects/project4.png",
+    "category": "design",
+    "description": "Complete mobile app UI design with prototype.",
+    "technologies": ["Figma", "Adobe XD"],
+    "completionDate": "2024-03-15",
+    "status": "completed"
+  },
+  {
+    "id": 5,
+    "name": "Restaurant Website",
+    "client": "Bistro Fresh",
+    "price": 350,
+    "image": "assets/images/projects/project5.png",
+    "category": "web development",
+    "description": "Restaurant website with online ordering and table reservation system.",
+    "technologies": ["React", "Firebase", "Stripe"],
+    "completionDate": "2024-03-20",
+    "status": "in-progress"
+  },
+  {
+    "id": 6,
+    "name": "Dashboard System",
+    "client": "DataMetrics",
+    "price": 950,
+    "image": "assets/images/projects/project6.png",
+    "category": "web development",
+    "description": "Analytics dashboard with real-time data visualization.",
+    "technologies": ["React", "D3.js", "Node.js", "Socket.io"],
+    "completionDate": "2024-04-01",
+    "status": "in-progress"
+  }
+]

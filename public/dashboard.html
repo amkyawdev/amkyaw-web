@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - AmkyawDev</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/3d-effects.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+</head>
+<body x-data="dashboard()" x-init="init()">
+    <div id="3d-background"></div>
+    
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo"><img src="assets/images/logo/logo.png" alt="AmkyawDev"></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="web-template.html">Templates</a></li>
+                <li><a href="project.html">Projects</a></li>
+                <li><a href="docs.html">Docs</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="dashboard.html" class="active">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="dashboard-container">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1>Welcome, <span x-text="user?.displayName || 'User'"></span></h1>
+                <button class="btn btn-secondary" @click="logout()">Logout</button>
+            </div>
+
+            <!-- Auth Check -->
+            <div x-show="!isAuthenticated" class="auth-required">
+                <div class="auth-card">
+                    <h2>Login Required</h2>
+                    <p>Please login to access your dashboard</p>
+                    <div class="auth-buttons">
+                        <button class="btn btn-primary" @click="login()">
+                            <i class="fab fa-google"></i> Login with Google
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Content -->
+            <div x-show="isAuthenticated" x-cloak>
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <i class="fas fa-download"></i>
+                        <div class="stat-info">
+                            <span class="stat-number">12</span>
+                            <span class="stat-label">Templates Downloaded</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-project-diagram"></i>
+                        <div class="stat-info">
+                            <span class="stat-number">3</span>
+                            <span class="stat-label">Active Projects</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-heart"></i>
+                        <div class="stat-info">
+                            <span class="stat-number">8</span>
+                            <span class="stat-label">Favorites</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-comments"></i>
+                        <div class="stat-info">
+                            <span class="stat-number">24</span>
+                            <span class="stat-label">Messages</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-download"></i> Recent Downloads</h3>
+                        <div class="card-content">
+                            <ul class="download-list">
+                                <li>
+                                    <img src="assets/images/templates/p1.png" alt="Template">
+                                    <div>
+                                        <h4>Portfolio Pro</h4>
+                                        <p>Downloaded: Jan 15, 2024</p>
+                                    </div>
+                                </li>
+                                <li>
+                                    <img src="assets/images/templates/p2.png" alt="Template">
+                                    <div>
+                                        <h4>Ecommerce Elite</h4>
+                                        <p>Downloaded: Jan 10, 2024</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-heart"></i> Favorites</h3>
+                        <div class="card-content">
+                            <ul class="favorites-list">
+                                <li>
+                                    <img src="assets/images/templates/p1.png" alt="Template">
+                                    <div>
+                                        <h4>Portfolio Pro</h4>
+                                        <p>$10</p>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <h3><i class="fas fa-bell"></i> Notifications</h3>
+                        <div class="card-content">
+                            <ul class="notification-list">
+                                <li>
+                                    <i class="fas fa-info-circle"></i>
+                                    <p>New template available: Business Pro</p>
+                                </li>
+                                <li>
+                                    <i class="fas fa-check-circle"></i>
+                                    <p>Payment confirmed for Ecommerce Elite</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 AmkyawDev. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="config/firebase-config.js"></script>
+    <script src="assets/js/auth/firebase-config.js"></script>
+    <script src="assets/js/auth/auth.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>

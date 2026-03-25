@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Docs - AmkyawDev</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/3d-effects.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+</head>
+<body x-data="docs()" x-init="loadDocs()">
+    <div id="3d-background"></div>
+    
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo"><img src="assets/images/logo/logo.png" alt="AmkyawDev"></a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="web-template.html">Templates</a></li>
+                <li><a href="project.html">Projects</a></li>
+                <li><a href="docs.html" class="active">Docs</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="container">
+            <h1>Documentation</h1>
+            <p>Tutorials, guides, and resources</p>
+        </div>
+    </section>
+
+    <section class="docs-section">
+        <div class="container">
+            <div class="docs-grid">
+                <aside class="docs-sidebar">
+                    <h3>Categories</h3>
+                    <ul class="category-list">
+                        <li><a href="#" class="active">All Docs</a></li>
+                        <li><a href="#">Tutorials</a></li>
+                        <li><a href="#">Guides</a></li>
+                        <li><a href="#">API Reference</a></li>
+                        <li><a href="#">FAQ</a></li>
+                    </ul>
+                    <div class="search-box">
+                        <input type="text" placeholder="Search docs...">
+                        <i class="fas fa-search"></i>
+                    </div>
+                </aside>
+
+                <div class="docs-content">
+                    <div class="docs-grid" id="docs-container">
+                        <template x-for="doc in docs" :key="doc.id">
+                            <article class="doc-card">
+                                <div class="doc-meta">
+                                    <span class="category" x-text="doc.category"></span>
+                                    <span class="read-time"><i class="fas fa-clock"></i> <span x-text="doc.readTime"></span> min</span>
+                                </div>
+                                <h3 x-text="doc.title"></h3>
+                                <p x-text="doc.content"></p>
+                                <div class="doc-footer">
+                                    <div class="tags">
+                                        <template x-for="tag in doc.tags" :key="tag">
+                                            <span class="tag" x-text="tag"></span>
+                                        </template>
+                                    </div>
+                                    <span class="author">By <span x-text="doc.author"></span></span>
+                                </div>
+                            </article>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 AmkyawDev. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="config/firebase-config.js"></script>
+    <script src="assets/js/3d/three.js"></script>
+    <script src="assets/js/3d/card-3d.js"></script>
+    <script src="assets/js/utils/api.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+</html>
