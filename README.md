@@ -156,6 +156,9 @@ npm run deploy
 |------|-------------|
 | `index.html` | Homepage with 3D particles animation |
 | `about.html` | About us, skills, timeline |
+| `login.html` | User login with email/password and social login |
+| `register.html` | User registration with password strength |
+| `reset.html` | Password reset with multi-step flow |
 | `web-template.html` | Template showcase and download |
 | `project.html` | Project portfolio gallery |
 | `dashboard.html` | User dashboard (requires login) |

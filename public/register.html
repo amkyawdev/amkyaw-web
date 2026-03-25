@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - AmkyawDev</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/components.css">
+    <link rel="stylesheet" href="assets/css/3d-effects.css">
+    <link rel="stylesheet" href="assets/css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <style>
+        .loader-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; transition: opacity 0.5s ease; }
+        .loader-container.hidden { opacity: 0; visibility: hidden; }
+        .loader-logo { font-size: 2.5rem; font-weight: bold; color: #4f46e5; margin-bottom: 30px; animation: pulse 1.5s ease-in-out infinite; }
+        .loader-spinner { width: 50px; height: 50px; border: 4px solid rgba(79,70,229,0.2); border-top-color: #4f46e5; border-radius: 50%; animation: spin 1s linear infinite; }
+        .loader-progress { width: 200px; height: 4px; background: rgba(79,70,229,0.2); border-radius: 2px; margin-top: 25px; overflow: hidden; }
+        .loader-progress-bar { height: 100%; background: linear-gradient(90deg,#4f46e5,#7c3aed); width: 0%; transition: width 0.3s ease; }
+        .loader-text { color: #94a3b8; margin-top: 15px; font-size: 0.9rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+        
+        .auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; position: relative; z-index: 1; }
+        .auth-container { width: 100%; max-width: 500px; background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border-radius: 20px; padding: 40px; border: 1px solid rgba(79, 70, 229, 0.2); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .auth-header { text-align: center; margin-bottom: 30px; }
+        .auth-logo { font-size: 2rem; font-weight: bold; color: #4f46e5; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .auth-title { font-size: 1.5rem; color: #f8fafc; margin-bottom: 8px; }
+        .auth-subtitle { color: #94a3b8; font-size: 0.9rem; }
+        .auth-form { display: flex; flex-direction: column; gap: 20px; }
+        .form-group { position: relative; }
+        .form-label { display: block; color: #f8fafc; margin-bottom: 8px; font-size: 0.9rem; }
+        .form-input { width: 100%; padding: 14px 16px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(79, 70, 229, 0.2); border-radius: 10px; color: #f8fafc; font-size: 1rem; transition: all 0.3s ease; }
+        .form-input:focus { outline: none; border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2); }
+        .form-input::placeholder { color: #64748b; }
+        .input-icon { position: absolute; right: 16px; top: 42px; color: #64748b; cursor: pointer; }
+        .password-strength { height: 4px; background: #1e293b; border-radius: 2px; margin-top: 8px; overflow: hidden; }
+        .password-strength-bar { height: 100%; width: 0%; transition: all 0.3s ease; border-radius: 2px; }
+        .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, #4f46e5, #7c3aed); border: none; border-radius: 10px; color: white; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px -10px rgba(79, 70, 229, 0.5); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+        .auth-divider { display: flex; align-items: center; gap: 16px; margin: 20px 0; }
+        .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: rgba(79, 70, 229, 0.2); }
+        .auth-divider span { color: #64748b; font-size: 0.85rem; }
+        .social-login { display: flex; gap: 12px; }
+        .btn-social { flex: 1; padding: 12px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(79, 70, 229, 0.2); border-radius: 10px; color: #f8fafc; font-size: 1.2rem; cursor: pointer; transition: all 0.3s ease; }
+        .btn-social:hover { border-color: #4f46e5; background: rgba(79, 70, 229, 0.1); }
+        .auth-footer { text-align: center; margin-top: 25px; color: #94a3b8; }
+        .auth-footer a { color: #4f46e5; text-decoration: none; font-weight: 500; }
+        .auth-footer a:hover { text-decoration: underline; }
+        .error-message { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 16px; display: none; }
+        .error-message.show { display: block; }
+        .success-message { background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; margin-bottom: 16px; display: none; }
+        .success-message.show { display: block; }
+        .spinner { width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .terms { display: flex; align-items: flex-start; gap: 10px; margin-top: 10px; }
+        .terms input { margin-top: 3px; accent-color: #4f46e5; }
+        .terms label { color: #94a3b8; font-size: 0.85rem; }
+        .terms a { color: #4f46e5; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body x-data="registerApp()">
+    <!-- Preloader -->
+    <div class="loader-container" id="preloader">
+        <div class="loader-logo"><i class="fas fa-cube"></i> AmkyawDev</div>
+        <div class="loader-spinner"></div>
+        <div class="loader-progress"><div class="loader-progress-bar" id="progress-bar"></div></div>
+        <div class="loader-text" id="loader-text">Loading...</div>
+    </div>
+
+    <!-- 3D Background -->
+    <div id="3d-background"></div>
+    
+    <!-- Auth Page -->
+    <div class="auth-page">
+        <div class="auth-container">
+            <div class="auth-header">
+                <div class="auth-logo"><i class="fas fa-cube"></i> AmkyawDev</div>
+                <h1 class="auth-title">Create Account</h1>
+                <p class="auth-subtitle">Join us and start your journey</p>
+            </div>
+            
+            <div class="error-message" id="error-msg" x-show="error" x-text="error"></div>
+            <div class="success-message" id="success-msg" x-show="success" x-text="success"></div>
+            
+            <form class="auth-form" @submit.prevent="register">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-input" placeholder="First name" x-model="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-input" placeholder="Last name" x-model="lastName" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" placeholder="Enter your email" x-model="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input :type="showPassword ? 'text' : 'password'" class="form-input" placeholder="Create a password" x-model="password" @input="checkPasswordStrength" required>
+                    <i class="fas input-icon" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'" @click="showPassword = !showPassword"></i>
+                    <div class="password-strength">
+                        <div class="password-strength-bar" :style="'width: ' + passwordStrength + '%; background: ' + strengthColor"></div>
+                    </div>
+                    <small style="color: #64748b; font-size: 0.8rem;" x-text="strengthText"></small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <input :type="showConfirmPassword ? 'text' : 'password'" class="form-input" placeholder="Confirm your password" x-model="confirmPassword" required>
+                    <i class="fas input-icon" :class="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'" @click="showConfirmPassword = !showConfirmPassword"></i>
+                </div>
+                
+                <div class="terms">
+                    <input type="checkbox" id="terms" x-model="acceptTerms">
+                    <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                </div>
+                
+                <button type="submit" class="btn-primary" :disabled="loading || !acceptTerms">
+                    <span class="spinner" x-show="loading"></span>
+                    <span x-show="!loading">Create Account</span>
+                </button>
+            </form>
+            
+            <div class="auth-divider"><span>or</span></div>
+            
+            <div class="social-login">
+                <button class="btn-social" @click="signupWithGoogle" title="Google"><i class="fab fa-google"></i></button>
+                <button class="btn-social" @click="signupWithGithub" title="GitHub"><i class="fab fa-github"></i></button>
+                <button class="btn-social" @click="signupWithFacebook" title="Facebook"><i class="fab fa-facebook-f"></i></button>
+            </div>
+            
+            <div class="auth-footer">
+                Already have an account? <a href="login.html">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="config/firebase-config.js"></script>
+    <script src="assets/js/3d/three.js"></script>
+    <script src="assets/js/main.js"></script>
+    
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const preloader = document.getElementById("preloader");
+        const progressBar = document.getElementById("progress-bar");
+        const loaderText = document.getElementById("loader-text");
+        const msgs = ["Loading...", "Preparing...", "Almost ready..."];
+        let progress = 0;
+        setInterval(function() {
+            progress++;
+            progressBar.style.width = progress + "%";
+            if(progress===30) loaderText.textContent=msgs[1];
+            if(progress===60) loaderText.textContent=msgs[2];
+            if(progress>=100) {
+                clearInterval(this);
+                setTimeout(function(){ preloader.classList.add("hidden"); setTimeout(function(){preloader.style.display="none"},500); },300);
+            }
+        },30);
+    });
+    
+    function registerApp() {
+        return {
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            showPassword: false,
+            showConfirmPassword: false,
+            acceptTerms: false,
+            loading: false,
+            error: '',
+            success: '',
+            passwordStrength: 0,
+            strengthColor: '#ef4444',
+            strengthText: '',
+            
+            checkPasswordStrength() {
+                const p = this.password;
+                let strength = 0;
+                if(p.length >= 8) strength += 25;
+                if(p.match(/[a-z]/)) strength += 25;
+                if(p.match(/[A-Z]/)) strength += 25;
+                if(p.match(/[0-9]/) || p.match(/[^a-zA-Z0-9]/)) strength += 25;
+                
+                this.passwordStrength = strength;
+                if(strength <= 25) { this.strengthColor = '#ef4444'; this.strengthText = 'Weak'; }
+                else if(strength <= 50) { this.strengthColor = '#f59e0b'; this.strengthText = 'Fair'; }
+                else if(strength <= 75) { this.strengthColor = '#22c55e'; this.strengthText = 'Good'; }
+                else { this.strengthColor = '#10b981'; this.strengthText = 'Strong'; }
+            },
+            
+            async register() {
+                if(this.password !== this.confirmPassword) {
+                    this.error = 'Passwords do not match.';
+                    return;
+                }
+                if(this.password.length < 6) {
+                    this.error = 'Password must be at least 6 characters.';
+                    return;
+                }
+                
+                this.loading = true;
+                this.error = '';
+                
+                try {
+                    const userCred = await firebase.auth().createUserWithEmailAndPassword(this.email, this.password);
+                    await userCred.user.updateProfile({ displayName: this.firstName + ' ' + this.lastName });
+                    
+                    // Send verification email
+                    await userCred.user.sendEmailVerification();
+                    
+                    this.success = 'Account created! Please check your email to verify.';
+                    setTimeout(() => window.location.href = 'dashboard.html', 2000);
+                } catch (err) {
+                    this.error = this.getErrorMessage(err.code);
+                }
+                
+                this.loading = false;
+            },
+            
+            async signupWithGoogle() {
+                this.loading = true;
+                this.error = '';
+                try {
+                    const provider = new firebase.auth.GoogleAuthProvider();
+                    await firebase.auth().signInWithPopup(provider);
+                    window.location.href = 'dashboard.html';
+                } catch (err) {
+                    this.error = this.getErrorMessage(err.code);
+                }
+                this.loading = false;
+            },
+            
+            async signupWithGithub() {
+                this.loading = true;
+                this.error = '';
+                try {
+                    const provider = new firebase.auth.GithubAuthProvider();
+                    await firebase.auth().signInWithPopup(provider);
+                    window.location.href = 'dashboard.html';
+                } catch (err) {
+                    this.error = this.getErrorMessage(err.code);
+                }
+                this.loading = false;
+            },
+            
+            async signupWithFacebook() {
+                this.loading = true;
+                this.error = '';
+                try {
+                    const provider = new firebase.auth.FacebookAuthProvider();
+                    await firebase.auth().signInWithPopup(provider);
+                    window.location.href = 'dashboard.html';
+                } catch (err) {
+                    this.error = this.getErrorMessage(err.code);
+                }
+                this.loading = false;
+            },
+            
+            getErrorMessage(code) {
+                const messages = {
+                    'auth/email-already-in-use': 'This email is already registered.',
+                    'auth/invalid-email': 'Please enter a valid email address.',
+                    'auth/weak-password': 'Password is too weak. Use at least 6 characters.',
+                    'auth/network-request-failed': 'Network error. Please check your connection.',
+                    'auth/popup-closed-by-user': 'Sign-up popup was closed before completing.'
+                };
+                return messages[code] || 'An error occurred. Please try again.';
+            }
+        };
+    }
+    </script>
+</body>
+</html>

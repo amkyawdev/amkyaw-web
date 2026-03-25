@@ -570,3 +570,33 @@ section {
 .mt-20 { margin-top: 20px; }
 .mb-20 { margin-bottom: 20px; }
 [x-cloak] { display: none !important; }
+/* Login/Register Buttons */
+.btn-login, .btn-register {
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: var(--transition);
+    display: inline-block;
+}
+
+.btn-login {
+    background: var(--gradient-primary);
+    color: var(--white);
+}
+
+.btn-login:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+}
+
+.btn-register {
+    background: transparent;
+    border: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    margin-left: 10px;
+}
+
+.btn-register:hover {
+    background: var(--primary-color);
+    color: var(--white);
+}
