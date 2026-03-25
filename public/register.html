@@ -147,10 +147,16 @@
     </div>
 
     <script src="config/firebase-config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <script src="assets/js/3d/three.js"></script>
     <script src="assets/js/main.js"></script>
     
     <script>
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(window.firebaseConfig);
+    }
+    
     document.addEventListener("DOMContentLoaded", function() {
         const preloader = document.getElementById("preloader");
         const progressBar = document.getElementById("progress-bar");
@@ -235,9 +241,11 @@
                 this.error = '';
                 try {
                     const provider = new firebase.auth.GoogleAuthProvider();
+                    provider.setCustomParameters({ prompt: 'select_account' });
                     await firebase.auth().signInWithPopup(provider);
                     window.location.href = 'dashboard.html';
                 } catch (err) {
+                    console.error('Google Signup Error:', err);
                     this.error = this.getErrorMessage(err.code);
                 }
                 this.loading = false;
@@ -248,9 +256,11 @@
                 this.error = '';
                 try {
                     const provider = new firebase.auth.GithubAuthProvider();
+                    provider.addScope('user:email');
                     await firebase.auth().signInWithPopup(provider);
                     window.location.href = 'dashboard.html';
                 } catch (err) {
+                    console.error('GitHub Signup Error:', err);
                     this.error = this.getErrorMessage(err.code);
                 }
                 this.loading = false;

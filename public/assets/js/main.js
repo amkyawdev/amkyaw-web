@@ -2,6 +2,14 @@
 // This file initializes all the functionality using Alpine.js
 
 (function() {
+    // Initialize Firebase if not already initialized
+    if (typeof firebase !== 'undefined' && typeof window.firebaseConfig !== 'undefined') {
+        if (!firebase.apps.length) {
+            firebase.initializeApp(window.firebaseConfig);
+        }
+        console.log('Firebase initialized');
+    }
+    
     // Wait for Alpine.js to be ready
     document.addEventListener('DOMContentLoaded', init);
 
