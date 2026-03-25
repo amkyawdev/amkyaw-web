@@ -14,3 +14,205 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <style>
+</head>
+<body x-data="authApp()">
+    <!-- Preloader -->
+    <div class="loader-container" id="preloader">
+        <div class="loader-logo"><i class="fas fa-cube"></i> AmkyawDev</div>
+        <div class="loader-spinner"></div>
+        <div class="loader-progress"><div class="loader-progress-bar" id="progress-bar"></div></div>
+        <div class="loader-text" id="loader-text">Loading...</div>
+    </div>
+
+    <!-- 3D Background -->
+    <div id="3d-background"></div>
+    
+    <!-- Auth Page -->
+    <div class="auth-page">
+        <div class="auth-container">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <i class="fas fa-cube"></i> AmkyawDev
+                </div>
+                <h1 class="auth-title">Welcome Back</h1>
+                <p class="auth-subtitle">Sign in to continue to your dashboard</p>
+            </div>
+            
+            <!-- Error/Success Messages -->
+            <div class="error-message" id="error-msg" x-show="error" x-text="error"></div>
+            <div class="success-message" id="success-msg" x-show="success" x-text="success"></div>
+            
+            <form class="auth-form" @submit.prevent="login">
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" placeholder="Enter your email" x-model="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input :type="showPassword ? 'text' : 'password'" class="form-input" placeholder="Enter your password" x-model="password" required>
+                    <i class="fas input-icon" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'" @click="showPassword = !showPassword"></i>
+                </div>
+                
+                <div class="remember-me">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="remember" x-model="rememberMe">
+                        <label for="remember">Remember me</label>
+                    </div>
+                    <a href="reset.html" class="forgot-password">Forgot password?</a>
+                </div>
+                
+                <button type="submit" class="btn-primary" :disabled="loading">
+                    <span class="spinner" x-show="loading"></span>
+                    <span x-show="!loading">Sign In</span>
+                </button>
+            </form>
+            
+            <div class="auth-divider">
+                <span>or</span>
+            </div>
+            
+            <div class="social-login">
+                <button class="btn-social" @click="loginWithGoogle" title="Google">
+                    <i class="fab fa-google"></i>
+                </button>
+                <button class="btn-social" @click="loginWithGithub" title="GitHub">
+                    <i class="fab fa-github"></i>
+                </button>
+                <button class="btn-social" @click="loginWithFacebook" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </button>
+            </div>
+            
+            <div class="auth-footer">
+                Don't have an account? <a href="register.html">Sign up</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="config/firebase-config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="assets/js/3d/three.js"></script>
+    <script src="assets/js/main.js"></script>
+    
+    <script>
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(window.firebaseConfig);
+    }
+    
+    // Preloader Script
+    document.addEventListener("DOMContentLoaded", function() {
+        const preloader = document.getElementById("preloader");
+        const progressBar = document.getElementById("progress-bar");
+        const loaderText = document.getElementById("loader-text");
+        const msgs = ["Loading...", "Preparing...", "Almost ready..."];
+        let progress = 0;
+        setInterval(function() {
+            progress++;
+            progressBar.style.width = progress + "%";
+            if(progress===30) loaderText.textContent=msgs[1];
+            if(progress===60) loaderText.textContent=msgs[2];
+            if(progress>=100) {
+                clearInterval(this);
+                setTimeout(function(){ preloader.classList.add("hidden"); setTimeout(function(){preloader.style.display="none"},500); },300);
+            }
+        },30);
+    });
+    
+    // Auth App
+    function authApp() {
+        return {
+            email: '',
+            password: '',
+            showPassword: false,
+            rememberMe: false,
+            loading: false,
+            error: '',
+            success: '',
+            
+            async login() {
+                this.loading = true;
+                this.error = '';
+                this.success = '';
+                
+                try {
+                    await firebase.auth().signInWithEmailAndPassword(this.email, this.password);
+                    this.success = 'Login successful! Redirecting...';
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                } catch (err) {
+                    this.error = this.getErrorMessage(err.code);
+                }
+                
+                this.loading = false;
+            },
+            
+            async loginWithGoogle() {
+                this.loading = true;
+                this.error = '';
+                try {
+                    const provider = new firebase.auth.GoogleAuthProvider();
+                    provider.setCustomParameters({
+                        prompt: 'select_account'
+                    });
+                    await firebase.auth().signInWithPopup(provider);
+                    window.location.href = 'dashboard.html';
+                } catch (err) {
+                    console.error('Google Login Error:', err);
+                    this.error = this.getErrorMessage(err.code);
+                }
+                this.loading = false;
+            },
+            
+            async loginWithGithub() {
+                this.loading = true;
+                this.error = '';
+                try {
+                    const provider = new firebase.auth.GithubAuthProvider();
+                    provider.addScope('user:email');
+                    await firebase.auth().signInWithPopup(provider);
+                    window.location.href = 'dashboard.html';
+                } catch (err) {
+                    console.error('GitHub Login Error:', err);
+                    this.error = this.getErrorMessage(err.code);
+                }
+                this.loading = false;
+            },
+            
+            async loginWithFacebook() {
+                this.loading = true;
+                this.error = '';
+                try {
+                    const provider = new firebase.auth.FacebookAuthProvider();
+                    provider.setCustomParameters({
+                        prompt: 'select_account'
+                    });
+                    provider.addScope('email');
+                    await firebase.auth().signInWithPopup(provider);
+                    window.location.href = 'dashboard.html';
+                } catch (err) {
+                    console.error('Facebook Login Error:', err);
+                    this.error = this.getErrorMessage(err.code);
+                }
+                this.loading = false;
+            },
+            
+            getErrorMessage(code) {
+                const messages = {
+                    'auth/user-not-found': 'No account found with this email.',
+                    'auth/wrong-password': 'Incorrect password.',
+                    'auth/invalid-email': 'Please enter a valid email address.',
+                    'auth/user-disabled': 'This account has been disabled.',
+                    'auth/too-many-requests': 'Too many attempts. Please try again later.',
+                    'auth/network-request-failed': 'Network error. Please check your connection.',
+                    'auth/popup-closed-by-user': 'Sign-in popup was closed before completing.'
+                };
+                return messages[code] || 'An error occurred. Please try again.';
+            }
+        };
+    }
+    </script>
+</body>
+</html>

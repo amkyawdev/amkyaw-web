@@ -14,3 +14,234 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <style>
+</head>
+<body x-data="registerApp()">
+    <!-- Preloader -->
+    <div class="loader-container" id="preloader">
+        <div class="loader-logo"><i class="fas fa-cube"></i> AmkyawDev</div>
+        <div class="loader-spinner"></div>
+        <div class="loader-progress"><div class="loader-progress-bar" id="progress-bar"></div></div>
+        <div class="loader-text" id="loader-text">Loading...</div>
+    </div>
+
+    <!-- 3D Background -->
+    <div id="3d-background"></div>
+    
+    <!-- Auth Page -->
+    <div class="auth-page">
+        <div class="auth-container">
+            <div class="auth-header">
+                <div class="auth-logo"><i class="fas fa-cube"></i> AmkyawDev</div>
+                <h1 class="auth-title">Create Account</h1>
+                <p class="auth-subtitle">Join us and start your journey</p>
+            </div>
+            
+            <div class="error-message" id="error-msg" x-show="error" x-text="error"></div>
+            <div class="success-message" id="success-msg" x-show="success" x-text="success"></div>
+            
+            <form class="auth-form" @submit.prevent="register">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-input" placeholder="First name" x-model="firstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-input" placeholder="Last name" x-model="lastName" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" class="form-input" placeholder="Enter your email" x-model="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input :type="showPassword ? 'text' : 'password'" class="form-input" placeholder="Create a password" x-model="password" @input="checkPasswordStrength" required>
+                    <i class="fas input-icon" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'" @click="showPassword = !showPassword"></i>
+                    <div class="password-strength">
+                        <div class="password-strength-bar" :style="'width: ' + passwordStrength + '%; background: ' + strengthColor"></div>
+                    </div>
+                    <small style="color: #64748b; font-size: 0.8rem;" x-text="strengthText"></small>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Confirm Password</label>
+                    <input :type="showConfirmPassword ? 'text' : 'password'" class="form-input" placeholder="Confirm your password" x-model="confirmPassword" required>
+                    <i class="fas input-icon" :class="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'" @click="showConfirmPassword = !showConfirmPassword"></i>
+                </div>
+                
+                <div class="terms">
+                    <input type="checkbox" id="terms" x-model="acceptTerms">
+                    <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                </div>
+                
+                <button type="submit" class="btn-primary" :disabled="loading || !acceptTerms">
+                    <span class="spinner" x-show="loading"></span>
+                    <span x-show="!loading">Create Account</span>
+                </button>
+            </form>
+            
+            <div class="auth-divider"><span>or</span></div>
+            
+            <div class="social-login">
+                <button class="btn-social" @click="signupWithGoogle" title="Google"><i class="fab fa-google"></i></button>
+                <button class="btn-social" @click="signupWithGithub" title="GitHub"><i class="fab fa-github"></i></button>
+                <button class="btn-social" @click="signupWithFacebook" title="Facebook"><i class="fab fa-facebook-f"></i></button>
+            </div>
+            
+            <div class="auth-footer">
+                Already have an account? <a href="login.html">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="config/firebase-config.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="assets/js/3d/three.js"></script>
+    <script src="assets/js/main.js"></script>
+    
+    <script>
+    // Initialize Firebase
+    if (!firebase.apps.length) {
+        firebase.initializeApp(window.firebaseConfig);
+    }
+    
+    document.addEventListener("DOMContentLoaded", function() {
+        const preloader = document.getElementById("preloader");
+        const progressBar = document.getElementById("progress-bar");
+        const loaderText = document.getElementById("loader-text");
+        const msgs = ["Loading...", "Preparing...", "Almost ready..."];
+        let progress = 0;
+        setInterval(function() {
+            progress++;
+            progressBar.style.width = progress + "%";
+            if(progress===30) loaderText.textContent=msgs[1];
+            if(progress===60) loaderText.textContent=msgs[2];
+            if(progress>=100) {
+                clearInterval(this);
+                setTimeout(function(){ preloader.classList.add("hidden"); setTimeout(function(){preloader.style.display="none"},500); },300);
+            }
+        },30);
+    });
+    
+    function registerApp() {
+        return {
+            firstName: '',
+            lastName: '',
+            email: '',
+            password: '',
+            confirmPassword: '',
+            showPassword: false,
+            showConfirmPassword: false,
+            acceptTerms: false,
+            loading: false,
+            error: '',
+            success: '',
+            passwordStrength: 0,
+            strengthColor: '#ef4444',
+            strengthText: '',
+            
+            checkPasswordStrength() {
+                const p = this.password;
+                let strength = 0;
+                if(p.length >= 8) strength += 25;
+                if(p.match(/[a-z]/)) strength += 25;
+                if(p.match(/[A-Z]/)) strength += 25;
+                if(p.match(/[0-9]/) || p.match(/[^a-zA-Z0-9]/)) strength += 25;
+                
+                this.passwordStrength = strength;
+                if(strength <= 25) { this.strengthColor = '#ef4444'; this.strengthText = 'Weak'; }
+                else if(strength <= 50) { this.strengthColor = '#f59e0b'; this.strengthText = 'Fair'; }
+                else if(strength <= 75) { this.strengthColor = '#22c55e'; this.strengthText = 'Good'; }
+                else { this.strengthColor = '#10b981'; this.strengthText = 'Strong'; }
+            },
+            
+            async register() {
+                if(this.password !== this.confirmPassword) {
+                    this.error = 'Passwords do not match.';
+                    return;
+                }
+                if(this.password.length < 6) {
+                    this.error = 'Password must be at least 6 characters.';
+                    return;
+                }
+                
+                this.loading = true;
+                this.error = '';
+                
+                try {
+                    const userCred = await firebase.auth().createUserWithEmailAndPassword(this.email, this.password);
+                    await userCred.user.updateProfile({ displayName: this.firstName + ' ' + this.lastName });
+                    
+                    // Send verification email
+                    await userCred.user.sendEmailVerification();
+                    
+                    this.success = 'Account created! Please check your email to verify.';
+                    setTimeout(() => window.location.href = 'dashboard.html', 2000);
+                } catch (err) {
+                    this.error = this.getErrorMessage(err.code);
+                }
+                
+                this.loading = false;
+            },
+            
+            async signupWithGoogle() {
+                this.loading = true;
+                this.error = '';
+                try {
+                    const provider = new firebase.auth.GoogleAuthProvider();
+                    provider.setCustomParameters({ prompt: 'select_account' });
+                    await firebase.auth().signInWithPopup(provider);
+                    window.location.href = 'dashboard.html';
+                } catch (err) {
+                    console.error('Google Signup Error:', err);
+                    this.error = this.getErrorMessage(err.code);
+                }
+                this.loading = false;
+            },
+            
+            async signupWithGithub() {
+                this.loading = true;
+                this.error = '';
+                try {
+                    const provider = new firebase.auth.GithubAuthProvider();
+                    provider.addScope('user:email');
+                    await firebase.auth().signInWithPopup(provider);
+                    window.location.href = 'dashboard.html';
+                } catch (err) {
+                    console.error('GitHub Signup Error:', err);
+                    this.error = this.getErrorMessage(err.code);
+                }
+                this.loading = false;
+            },
+            
+            async signupWithFacebook() {
+                this.loading = true;
+                this.error = '';
+                try {
+                    const provider = new firebase.auth.FacebookAuthProvider();
+                    await firebase.auth().signInWithPopup(provider);
+                    window.location.href = 'dashboard.html';
+                } catch (err) {
+                    this.error = this.getErrorMessage(err.code);
+                }
+                this.loading = false;
+            },
+            
+            getErrorMessage(code) {
+                const messages = {
+                    'auth/email-already-in-use': 'This email is already registered.',
+                    'auth/invalid-email': 'Please enter a valid email address.',
+                    'auth/weak-password': 'Password is too weak. Use at least 6 characters.',
+                    'auth/network-request-failed': 'Network error. Please check your connection.',
+                    'auth/popup-closed-by-user': 'Sign-up popup was closed before completing.'
+                };
+                return messages[code] || 'An error occurred. Please try again.';
+            }
+        };
+    }
+    </script>
+</body>
+</html>
