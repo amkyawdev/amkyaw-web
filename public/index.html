@@ -16,8 +16,132 @@
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <style>
+        /* Animation Loader Styles */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        
+        .loader-container.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        
+        .loader-logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #4f46e5;
+            margin-bottom: 30px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(79, 70, 229, 0.2);
+            border-top-color: #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loader-progress {
+            width: 200px;
+            height: 4px;
+            background: rgba(79, 70, 229, 0.2);
+            border-radius: 2px;
+            margin-top: 25px;
+            overflow: hidden;
+        }
+        
+        .loader-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4f46e5, #7c3aed, #4f46e5);
+            background-size: 200% 100%;
+            animation: gradientMove 1.5s ease-in-out infinite;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .loader-text {
+            color: #94a3b8;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+        
+        @keyframes gradientMove {
+            0% { background-position: 100% 0; }
+            100% { background-position: -100% 0; }
+        }
+        
+        /* Floating particles for loader */
+        .loader-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .loader-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #4f46e5;
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: floatParticle 3s ease-in-out infinite;
+        }
+        
+        @keyframes floatParticle {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.3; }
+            50% { transform: translateY(-100px) translateX(30px); opacity: 0.6; }
+        }
+        
+        /* Hide content while loading */
+        [x-cloak] { display: none !important; }
+    </style>
 </head>
 <body x-data="appData()">
+    <!-- Animation Loader -->
+    <div class="loader-container" id="preloader">
+        <div class="loader-particles">
+            <div class="loader-particle" style="left: 10%; top: 20%; animation-delay: 0s;"></div>
+            <div class="loader-particle" style="left: 20%; top: 60%; animation-delay: 0.5s;"></div>
+            <div class="loader-particle" style="left: 70%; top: 30%; animation-delay: 1s;"></div>
+            <div class="loader-particle" style="left: 80%; top: 70%; animation-delay: 1.5s;"></div>
+            <div class="loader-particle" style="left: 30%; top: 80%; animation-delay: 2s;"></div>
+            <div class="loader-particle" style="left: 60%; top: 15%; animation-delay: 2.5s;"></div>
+        </div>
+        <div class="loader-logo">
+            <i class="fas fa-cube"></i> AmkyawDev
+        </div>
+        <div class="loader-spinner"></div>
+        <div class="loader-progress">
+            <div class="loader-progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="loader-text" id="loader-text">Loading...</div>
+    </div>
+
     <!-- 3D Background -->
     <div id="3d-background"></div>
     
@@ -268,5 +392,57 @@
     <script src="assets/js/auth/auth.js"></script>
     <script src="assets/js/chat/chat-widget.js"></script>
     <script src="assets/js/main.js"></script>
+    
+    <!-- Preloader Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const preloader = document.getElementById('preloader');
+            const progressBar = document.getElementById('progress-bar');
+            const loaderText = document.getElementById('loader-text');
+            
+            const loadingMessages = [
+                'Loading...',
+                'Preparing 3D effects...',
+                'Loading templates...',
+                'Almost ready...'
+            ];
+            
+            let progress = 0;
+            let messageIndex = 0;
+            const totalDuration = 3000; // 3 seconds
+            const intervalTime = totalDuration / 100;
+            
+            const progressInterval = setInterval(function() {
+                progress++;
+                progressBar.style.width = progress + '%';
+                
+                // Update message based on progress
+                if (progress === 25 && messageIndex === 0) {
+                    messageIndex = 1;
+                    loaderText.textContent = loadingMessages[1];
+                } else if (progress === 50 && messageIndex === 1) {
+                    messageIndex = 2;
+                    loaderText.textContent = loadingMessages[2];
+                } else if (progress === 75 && messageIndex === 2) {
+                    messageIndex = 3;
+                    loaderText.textContent = loadingMessages[3];
+                }
+                
+                if (progress >= 100) {
+                    clearInterval(progressInterval);
+                    
+                    // Hide preloader after completion
+                    setTimeout(function() {
+                        preloader.classList.add('hidden');
+                        
+                        // Remove preloader from DOM after transition
+                        setTimeout(function() {
+                            preloader.style.display = 'none';
+                        }, 500);
+                    }, 300);
+                }
+            }, intervalTime);
+        });
+    </script>
 </body>
 </html>
