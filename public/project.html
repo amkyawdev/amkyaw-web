@@ -11,19 +11,31 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <style>
+        .page-header { padding: 140px 0 60px; text-align: center; background: linear-gradient(135deg, rgba(79, 70, 229, 0.1), rgba(124, 58, 237, 0.1)); }
+        .page-title { font-size: 3rem; color: white; margin-bottom: 16px; }
+        .page-subtitle { color: #94a3b8; font-size: 1.1rem; }
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px; padding: 60px 0; }
+        .project-card { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(79, 70, 229, 0.2); border-radius: 24px; overflow: hidden; transition: all 0.4s ease; position: relative; }
+        .project-card:hover { transform: translateY(-10px); border-color: rgba(79, 70, 229, 0.5); box-shadow: 0 25px 50px rgba(79, 70, 229, 0.25); }
+        .project-image { height: 220px; background: linear-gradient(135deg, #4f46e5, #7c3aed); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+        .project-image::before { content: ''; position: absolute; width: 100%; height: 100%; background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/></svg>') center/contain repeat; }
+        .project-image i { font-size: 4rem; color: white; opacity: 0.8; }
+        .project-content { padding: 24px; }
+        .project-category { display: inline-block; padding: 6px 14px; background: rgba(79, 70, 229, 0.2); color: #4f46e5; border-radius: 20px; font-size: 0.8rem; margin-bottom: 12px; }
+        .project-title { font-size: 1.4rem; color: white; margin-bottom: 8px; font-weight: 600; }
+        .project-client { color: #94a3b8; font-size: 0.9rem; margin-bottom: 12px; }
+        .project-tech { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .tech-tag { padding: 4px 12px; background: rgba(30, 41, 59, 0.8); border-radius: 8px; color: #e2e8f0; font-size: 0.8rem; }
+        .project-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid rgba(79, 70, 229, 0.1); }
+        .project-price { color: #4f46e5; font-weight: 700; font-size: 1.2rem; }
+        .project-status { padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: 500; }
+        .status-completed { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .status-progress { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
     </style>
 </head>
-        <div class="loader-spinner"></div>
-        <div class="loader-progress"><div class="loader-progress-bar" id="progress-bar"></div></div>
-        <div class="loader-text" id="loader-text">Loading...</div>
-    </div>
-
-<body x-data="projects()" x-init="loadProjects()">
+<body x-data="projects()" class="page-fade">
     <div id="3d-background"></div>
-    
     <nav class="navbar">
         <div class="container">
             <a href="index.html" class="logo"><img src="assets/images/logo/logo.png" alt="AmkyawDev"></a>
@@ -33,92 +45,103 @@
                 <li><a href="about.html">About</a></li>
                 <li><a href="web-template.html">Templates</a></li>
                 <li><a href="project.html" class="active">Projects</a></li>
-                <li><a href="docs.html">Docs</a></li>
                 <li><a href="contact.html">Contact</a></li>
-                <li><a href="login.html" class="btn-login">Login</a></li>
-                <li><a href="register.html" class="btn-register">Register</a></li>
+                <li><a href="login.html">Login</a></li>
             </ul>
         </div>
     </nav>
 
-    <section class="page-header">
+    <section class="page-header slide-up">
         <div class="container">
-            <h1>Our Projects</h1>
-            <p>Showcasing our recent work and client success stories</p>
+            <h1 class="page-title">My Projects</h1>
+            <p class="page-subtitle">Showcasing my recent work and collaborations</p>
         </div>
     </section>
 
-    <section class="projects-section">
+    <section class="projects-grid">
         <div class="container">
-            <div class="filters" x-data="{ status: 'all' }">
-                <div class="category-filters">
-                    <button class="filter-btn" :class="{ 'active': status === 'all' }" @click="status = 'all'">All</button>
-                    <button class="filter-btn" :class="{ 'active': status === 'completed' }" @click="status = 'completed'">Completed</button>
-                    <button class="filter-btn" :class="{ 'active': status === 'in-progress' }" @click="status = 'in-progress'">In Progress</button>
+            <div class="project-card">
+                <div class="project-image"><i class="fas fa-globe"></i></div>
+                <div class="project-content">
+                    <span class="project-category">Web Development</span>
+                    <h3 class="project-title">Corporate Website Redesign</h3>
+                    <p class="project-client">Tech Corp International</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">MongoDB</span>
+                    </div>
+                    <div class="project-footer">
+                        <span class="project-price">$500</span>
+                        <span class="project-status status-completed">Completed</span>
+                    </div>
                 </div>
             </div>
-
-            <div class="projects-grid" id="projects-container">
-                <template x-for="project in projects" :key="project.id">
-                    <div class="project-card">
-                        <div class="project-image">
-                            <img :src="project.image" :alt="project.name">
-                            <div class="project-status" :class="project.status" x-text="project.status"></div>
-                        </div>
-                        <div class="project-info">
-                            <span class="category" x-text="project.category"></span>
-                            <h3 x-text="project.name"></h3>
-                            <p class="client">Client: <span x-text="project.client"></span></p>
-                            <div class="technologies">
-                                <template x-for="tech in project.technologies" :key="tech">
-                                    <span class="tech-tag" x-text="tech"></span>
-                                </template>
-                            </div>
-                            <div class="project-footer">
-                                <span class="price">$<span x-text="project.price"></span></span>
-                                <span class="date"><i class="fas fa-calendar"></i> <span x-text="project.completionDate"></span></span>
-                            </div>
-                        </div>
+            <div class="project-card">
+                <div class="project-image"><i class="fas fa-shopping-cart"></i></div>
+                <div class="project-content">
+                    <span class="project-category">E-commerce</span>
+                    <h3 class="project-title">Online Store Platform</h3>
+                    <p class="project-client">Fashion House</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">Vue.js</span>
+                        <span class="tech-tag">Stripe</span>
+                        <span class="tech-tag">PostgreSQL</span>
                     </div>
-                </template>
+                    <div class="project-footer">
+                        <span class="project-price">$850</span>
+                        <span class="project-status status-completed">Completed</span>
+                    </div>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-image"><i class="fas fa-mobile-alt"></i></div>
+                <div class="project-content">
+                    <span class="project-category">Mobile App</span>
+                    <h3 class="project-title">Fitness Tracking App</h3>
+                    <p class="project-client">HealthFirst</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">React Native</span>
+                        <span class="tech-tag">Firebase</span>
+                        <span class="tech-tag">TensorFlow</span>
+                    </div>
+                    <div class="project-footer">
+                        <span class="project-price">$1,200</span>
+                        <span class="project-status status-progress">In Progress</span>
+                    </div>
+                </div>
+            </div>
+            <div class="project-card">
+                <div class="project-image"><i class="fas fa-chart-line"></i></div>
+                <div class="project-content">
+                    <span class="project-category">Dashboard</span>
+                    <h3 class="project-title">Analytics Dashboard</h3>
+                    <p class="project-client">DataInsights Co.</p>
+                    <div class="project-tech">
+                        <span class="tech-tag">D3.js</span>
+                        <span class="tech-tag">Python</span>
+                        <span class="tech-tag">AWS</span>
+                    </div>
+                    <div class="project-footer">
+                        <span class="project-price">$650</span>
+                        <span class="project-status status-completed">Completed</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-bottom">
-                <p>&copy; 2024 AmkyawDev. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
-    <script src="config/firebase-config.js"></script>
     <script src="assets/js/3d/three.js"></script>
     <script src="assets/js/3d/card-3d.js"></script>
-    <script src="assets/js/utils/api.js"></script>
-    <script src="assets/js/main.js"></script>
-    <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const preloader = document.getElementById("preloader");
-        const progressBar = document.getElementById("progress-bar");
-        const loaderText = document.getElementById("loader-text");
-        const msgs = ["Loading...", "Preparing...", "Almost ready..."];
-        let progress = 0;
-        setInterval(function() {
-            progress++;
-            progressBar.style.width = progress + "%";
-            if(progress===30) loaderText.textContent=msgs[1];
-            if(progress===60) loaderText.textContent=msgs[2];
-            if(progress>=100) {
-                clearInterval(this);
-                setTimeout(function(){ preloader.classList.add("hidden"); setTimeout(function(){preloader.style.display="none"},500); },300);
-            }
-        },30);
-    });
-    </script>
     <script src="assets/js/3d/smooth-scroll.js"></script>
     <script src="assets/js/utils/mobile-menu.js"></script>
     <script src="assets/js/utils/slider.js"></script>
+    <script>
+        function projects() {
+            return {
+                init() { if (typeof initAdvanced3DBackground === 'function') initAdvanced3DBackground(); }
+            };
+        }
+    </script>
 </body>
 </html>
