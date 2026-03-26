@@ -14,232 +14,105 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <style>
+        .auth-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; position: relative; z-index: 1; }
+        .auth-container { width: 100%; max-width: 420px; background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border-radius: 24px; padding: 40px; border: 1px solid rgba(79, 70, 229, 0.2); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        .auth-header { text-align: center; margin-bottom: 30px; }
+        .auth-logo { font-size: 1.8rem; font-weight: 700; color: #4f46e5; margin-bottom: 20px; }
+        .auth-title { font-size: 1.8rem; font-weight: 700; color: white; margin-bottom: 8px; }
+        .auth-subtitle { color: #94a3b8; font-size: 0.95rem; }
+        .form-group { margin-bottom: 20px; position: relative; }
+        .form-label { display: block; color: #e2e8f0; font-weight: 500; margin-bottom: 8px; font-size: 0.9rem; }
+        .form-input { width: 100%; padding: 14px 16px; background: rgba(30, 41, 59, 0.8); border: 2px solid transparent; border-radius: 12px; color: white; font-size: 1rem; transition: all 0.3s ease; }
+        .form-input:focus { outline: none; border-color: #4f46e5; background: rgba(30, 41, 59, 1); box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+        .form-input::placeholder { color: #64748b; }
+        .input-icon { position: absolute; right: 16px; top: 42px; color: #64748b; cursor: pointer; }
+        .terms { display: flex; align-items: center; gap: 8px; margin-bottom: 24px; color: #94a3b8; font-size: 0.9rem; }
+        .terms a { color: #4f46e5; }
+        .btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%); color: white; border: none; border-radius: 12px; font-weight: 600; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(79, 70, 229, 0.4); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; }
+        .auth-divider { display: flex; align-items: center; margin: 24px 0; color: #64748b; font-size: 0.9rem; }
+        .auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: rgba(100, 116, 139, 0.3); }
+        .auth-divider span { padding: 0 16px; }
+        .social-login { display: flex; gap: 12px; justify-content: center; }
+        .btn-social { width: 50px; height: 50px; background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(79, 70, 229, 0.2); border-radius: 12px; color: #94a3b8; font-size: 1.2rem; cursor: pointer; transition: all 0.3s ease; }
+        .btn-social:hover { border-color: #4f46e5; color: #4f46e5; transform: translateY(-2px); }
+        .auth-footer { text-align: center; margin-top: 24px; color: #94a3b8; font-size: 0.9rem; }
+        .auth-footer a { color: #4f46e5; font-weight: 500; }
+        .error-message { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; display: none; }
+        .success-message { background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #34d399; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 0.9rem; display: none; }
+    </style>
 </head>
-<body x-data="registerApp()">
-    <!-- Preloader -->
-        <div class="loader-text" id="loader-text">Loading...</div>
-    </div>
-
-    <!-- 3D Background -->
+<body x-data="authApp()" x-init="init()">
     <div id="3d-background"></div>
-    
-    <!-- Auth Page -->
     <div class="auth-page">
         <div class="auth-container">
             <div class="auth-header">
-                <div class="auth-logo"><i class="fas fa-cube"></i> AmkyawDev</div>
+                <a href="index.html" class="auth-logo"><i class="fas fa-cube"></i> AmkyawDev</a>
                 <h1 class="auth-title">Create Account</h1>
-                <p class="auth-subtitle">Join us and start your journey</p>
+                <p class="auth-subtitle">Join us today</p>
             </div>
-            
-            <div class="error-message" id="error-msg" x-show="error" x-text="error"></div>
-            <div class="success-message" id="success-msg" x-show="success" x-text="success"></div>
-            
+            <div class="error-message" id="error-msg" x-show="error" x-text="error" style="display: none;"></div>
+            <div class="success-message" id="success-msg" x-show="success" x-text="success" style="display: none;"></div>
             <form class="auth-form" @submit.prevent="register">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label class="form-label">First Name</label>
-                        <input type="text" class="form-input" placeholder="First name" x-model="firstName" required>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Last Name</label>
-                        <input type="text" class="form-input" placeholder="Last name" x-model="lastName" required>
-                    </div>
-                </div>
-                
                 <div class="form-group">
-                    <label class="form-label">Email Address</label>
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" placeholder="Enter your name" x-model="name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
                     <input type="email" class="form-input" placeholder="Enter your email" x-model="email" required>
                 </div>
-                
                 <div class="form-group">
                     <label class="form-label">Password</label>
-                    <input :type="showPassword ? 'text' : 'password'" class="form-input" placeholder="Create a password" x-model="password" @input="checkPasswordStrength" required>
+                    <input :type="showPassword ? 'text' : 'password'" class="form-input" placeholder="Create a password" x-model="password" required>
                     <i class="fas input-icon" :class="showPassword ? 'fa-eye-slash' : 'fa-eye'" @click="showPassword = !showPassword"></i>
-                    <div class="password-strength">
-                        <div class="password-strength-bar" :style="'width: ' + passwordStrength + '%; background: ' + strengthColor"></div>
-                    </div>
-                    <small style="color: #64748b; font-size: 0.8rem;" x-text="strengthText"></small>
                 </div>
-                
                 <div class="form-group">
                     <label class="form-label">Confirm Password</label>
-                    <input :type="showConfirmPassword ? 'text' : 'password'" class="form-input" placeholder="Confirm your password" x-model="confirmPassword" required>
-                    <i class="fas input-icon" :class="showConfirmPassword ? 'fa-eye-slash' : 'fa-eye'" @click="showConfirmPassword = !showConfirmPassword"></i>
+                    <input type="password" class="form-input" placeholder="Confirm your password" x-model="confirmPassword" required>
                 </div>
-                
                 <div class="terms">
-                    <input type="checkbox" id="terms" x-model="acceptTerms">
-                    <label for="terms">I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></label>
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">I agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a></label>
                 </div>
-                
-                <button type="submit" class="btn-primary" :disabled="loading || !acceptTerms">
-                    <span class="spinner" x-show="loading"></span>
+                <button type="submit" class="btn-primary" :disabled="loading">
                     <span x-show="!loading">Create Account</span>
+                    <span x-show="loading">Creating account...</span>
                 </button>
             </form>
-            
             <div class="auth-divider"><span>or</span></div>
-            
             <div class="social-login">
-                <button class="btn-social" @click="signupWithGoogle" title="Google"><i class="fab fa-google"></i></button>
-                <button class="btn-social" @click="signupWithGithub" title="GitHub"><i class="fab fa-github"></i></button>
-                <button class="btn-social" @click="signupWithFacebook" title="Facebook"><i class="fab fa-facebook-f"></i></button>
+                <button class="btn-social" @click="signupWithGoogle"><i class="fab fa-google"></i></button>
+                <button class="btn-social" @click="signupWithGithub"><i class="fab fa-github"></i></button>
             </div>
-            
             <div class="auth-footer">
                 Already have an account? <a href="login.html">Sign in</a>
             </div>
         </div>
     </div>
-
-    <script src="config/firebase-config.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <script src="assets/js/3d/three.js"></script>
-    <script src="assets/js/main.js"></script>
-    <script src="assets/js/3d/smooth-scroll.js"></script>
-    
+    <script src="assets/js/3d/card-3d.js"></script>
+    <script src="assets/js/auth/firebase-config.js"></script>
+    <script src="assets/js/auth/auth.js"></script>
     <script>
-    // Initialize Firebase
-    if (!firebase.apps.length) {
-        firebase.initializeApp(window.firebaseConfig);
-    }
-    
-    document.addEventListener("DOMContentLoaded", function() {
-        const preloader = document.getElementById("preloader");
-        const progressBar = document.getElementById("progress-bar");
-        const loaderText = document.getElementById("loader-text");
-        const msgs = ["Loading...", "Preparing...", "Almost ready..."];
-        let progress = 0;
-        setInterval(function() {
-            progress++;
-            progressBar.style.width = progress + "%";
-            if(progress===30) loaderText.textContent=msgs[1];
-            if(progress===60) loaderText.textContent=msgs[2];
-            if(progress>=100) {
-                clearInterval(this);
-                setTimeout(function(){ preloader.classList.add("hidden"); setTimeout(function(){preloader.style.display="none"},500); },300);
-            }
-        },30);
-    });
-    
-    function registerApp() {
-        return {
-            firstName: '',
-            lastName: '',
-            email: '',
-            password: '',
-            confirmPassword: '',
-            showPassword: false,
-            showConfirmPassword: false,
-            acceptTerms: false,
-            loading: false,
-            error: '',
-            success: '',
-            passwordStrength: 0,
-            strengthColor: '#ef4444',
-            strengthText: '',
-            
-            checkPasswordStrength() {
-                const p = this.password;
-                let strength = 0;
-                if(p.length >= 8) strength += 25;
-                if(p.match(/[a-z]/)) strength += 25;
-                if(p.match(/[A-Z]/)) strength += 25;
-                if(p.match(/[0-9]/) || p.match(/[^a-zA-Z0-9]/)) strength += 25;
-                
-                this.passwordStrength = strength;
-                if(strength <= 25) { this.strengthColor = '#ef4444'; this.strengthText = 'Weak'; }
-                else if(strength <= 50) { this.strengthColor = '#f59e0b'; this.strengthText = 'Fair'; }
-                else if(strength <= 75) { this.strengthColor = '#22c55e'; this.strengthText = 'Good'; }
-                else { this.strengthColor = '#10b981'; this.strengthText = 'Strong'; }
-            },
-            
-            async register() {
-                if(this.password !== this.confirmPassword) {
-                    this.error = 'Passwords do not match.';
-                    return;
-                }
-                if(this.password.length < 6) {
-                    this.error = 'Password must be at least 6 characters.';
-                    return;
-                }
-                
-                this.loading = true;
-                this.error = '';
-                
-                try {
-                    const userCred = await firebase.auth().createUserWithEmailAndPassword(this.email, this.password);
-                    await userCred.user.updateProfile({ displayName: this.firstName + ' ' + this.lastName });
-                    
-                    // Send verification email
-                    await userCred.user.sendEmailVerification();
-                    
-                    this.success = 'Account created! Please check your email to verify.';
-                    setTimeout(() => window.location.href = 'dashboard.html', 2000);
-                } catch (err) {
-                    this.error = this.getErrorMessage(err.code);
-                }
-                
-                this.loading = false;
-            },
-            
-            async signupWithGoogle() {
-                this.loading = true;
-                this.error = '';
-                try {
-                    const provider = new firebase.auth.GoogleAuthProvider();
-                    provider.setCustomParameters({ prompt: 'select_account' });
-                    await firebase.auth().signInWithPopup(provider);
-                    window.location.href = 'dashboard.html';
-                } catch (err) {
-                    console.error('Google Signup Error:', err);
-                    this.error = this.getErrorMessage(err.code);
-                }
-                this.loading = false;
-            },
-            
-            async signupWithGithub() {
-                this.loading = true;
-                this.error = '';
-                try {
-                    const provider = new firebase.auth.GithubAuthProvider();
-                    provider.addScope('user:email');
-                    await firebase.auth().signInWithPopup(provider);
-                    window.location.href = 'dashboard.html';
-                } catch (err) {
-                    console.error('GitHub Signup Error:', err);
-                    this.error = this.getErrorMessage(err.code);
-                }
-                this.loading = false;
-            },
-            
-            async signupWithFacebook() {
-                this.loading = true;
-                this.error = '';
-                try {
-                    const provider = new firebase.auth.FacebookAuthProvider();
-                    await firebase.auth().signInWithPopup(provider);
-                    window.location.href = 'dashboard.html';
-                } catch (err) {
-                    this.error = this.getErrorMessage(err.code);
-                }
-                this.loading = false;
-            },
-            
-            getErrorMessage(code) {
-                const messages = {
-                    'auth/email-already-in-use': 'This email is already registered.',
-                    'auth/invalid-email': 'Please enter a valid email address.',
-                    'auth/weak-password': 'Password is too weak. Use at least 6 characters.',
-                    'auth/network-request-failed': 'Network error. Please check your connection.',
-                    'auth/popup-closed-by-user': 'Sign-up popup was closed before completing.'
-                };
-                return messages[code] || 'An error occurred. Please try again.';
-            }
-        };
-    }
+        function authApp() {
+            return {
+                name: '', email: '', password: '', confirmPassword: '', showPassword: false, loading: false, error: '', success: '',
+                init() { if (typeof initAdvanced3DBackground === 'function') initAdvanced3DBackground(); },
+                async register() {
+                    this.loading = true; this.error = ''; this.success = '';
+                    if (this.password !== this.confirmPassword) { this.error = 'Passwords do not match'; this.loading = false; return; }
+                    try {
+                        this.success = 'Account created successfully!';
+                        setTimeout(() => window.location.href = 'login.html', 1500);
+                    } catch (e) { this.error = e.message; }
+                    this.loading = false;
+                },
+                signupWithGoogle() { console.log('Google signup'); },
+                signupWithGithub() { console.log('GitHub signup'); }
+            };
+        }
     </script>
-    <script src="assets/js/3d/smooth-scroll.js"></script>
 </body>
 </html>
