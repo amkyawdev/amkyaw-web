@@ -14,15 +14,9 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <style>
-        .loader-text { color: #94a3b8; margin-top: 15px; font-size: 0.9rem; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
     </style>
 </head>
 <body x-data="appData()">
-    <!-- Preloader -->
-    <div class="loader-container" id="preloader">
-        <div class="loader-logo"><i class="fas fa-cube"></i> AmkyawDev</div>
         <div class="loader-spinner"></div>
         <div class="loader-progress"><div class="loader-progress-bar" id="progress-bar"></div></div>
         <div class="loader-text" id="loader-text">Loading...</div>
@@ -33,6 +27,7 @@
     <nav class="navbar">
         <div class="container">
             <a href="index.html" class="logo"><img src="assets/images/logo/logo.png" alt="AmkyawDev"></a>
+            <div class="menu-toggle" onclick="this.classList.toggle('active')"><span></span><span></span><span></span></div>
             <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="about.html" class="active">About</a></li>
@@ -185,5 +180,7 @@
     });
     </script>
     <script src="assets/js/3d/smooth-scroll.js"></script>
+    <script src="assets/js/utils/mobile-menu.js"></script>
+    <script src="assets/js/utils/slider.js"></script>
 </body>
 </html>
