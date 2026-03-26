@@ -30,6 +30,7 @@
             <button class="mobile-toggle" @click="mobileMenuOpen = !mobileMenuOpen">
                 <i class="fas" :class="mobileMenuOpen ? 'fa-times' : 'fa-bars'"></i>
             </button>
+            <div class="menu-toggle" onclick="this.classList.toggle('active'); document.querySelector('.nav-links').classList.toggle('active')"><span></span><span></span><span></span></div>
             <ul class="nav-links" :class="{ 'active': mobileMenuOpen }">
                 <li><a href="index.html" class="active">Home</a></li>
                 <li><a href="about.html">About</a></li>
