@@ -11,35 +11,44 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
     <style>
-        .dashboard-page { padding-top: 80px; min-height: 100vh; }
-        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
-        .dashboard-title { font-size: 2rem; color: white; }
-        .user-profile { display: flex; align-items: center; gap: 12px; }
-        .user-avatar { width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, #4f46e5, #7c3aed); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 40px; }
-        .stat-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(79, 70, 229, 0.2); border-radius: 20px; padding: 24px; transition: all 0.3s ease; }
-        .stat-card:hover { transform: translateY(-5px); border-color: rgba(79, 70, 229, 0.5); box-shadow: 0 20px 40px rgba(79, 70, 229, 0.2); }
-        .stat-icon { width: 50px; height: 50px; background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.3rem; margin-bottom: 16px; }
-        .stat-value { font-size: 2rem; font-weight: 700; color: white; }
-        .stat-label { color: #94a3b8; font-size: 0.9rem; margin-top: 4px; }
+        .dashboard-page { padding: 100px 0; min-height: 100vh; }
+        .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .dash-welcome { font-size: 2rem; color: white; }
+        .dash-date { color: #94a3b8; font-size: 0.9rem; }
+        .user-info { display: flex; align-items: center; gap: 12px; background: rgba(79, 70, 229, 0.2); padding: 8px 16px; border-radius: 50px; }
+        .user-avatar { width: 36px; height: 36px; background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; margin-bottom: 40px; }
+        .stat-card { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(79, 70, 229, 0.2); border-radius: 24px; padding: 28px; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .stat-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #4f46e5, #7c3aed); }
+        .stat-card:hover { transform: translateY(-8px); border-color: rgba(79, 70, 229, 0.5); box-shadow: 0 20px 40px rgba(79, 70, 229, 0.25); }
+        .stat-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
+        .stat-icon { width: 52px; height: 52px; background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 16px; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.4rem; }
+        .stat-trend { font-size: 0.85rem; padding: 4px 10px; border-radius: 20px; }
+        .trend-up { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .trend-down { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .stat-value { font-size: 2.2rem; font-weight: 700; color: white; margin-bottom: 4px; }
+        .stat-label { color: #94a3b8; font-size: 0.95rem; }
         .content-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
-        .card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(79, 70, 229, 0.2); border-radius: 20px; padding: 24px; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .main-card { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(79, 70, 229, 0.2); border-radius: 24px; padding: 28px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid rgba(79, 70, 229, 0.1); }
         .card-title { font-size: 1.2rem; color: white; font-weight: 600; }
-        .btn-sm { padding: 8px 16px; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; border-radius: 8px; font-size: 0.85rem; cursor: pointer; transition: all 0.3s; }
-        .btn-sm:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4); }
-        .activity-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(79, 70, 229, 0.1); }
-        .activity-icon { width: 36px; height: 36px; background: rgba(79, 70, 229, 0.2); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #4f46e5; }
-        .activity-text { color: #e2e8f0; font-size: 0.9rem; }
+        .btn-view { padding: 10px 20px; background: linear-gradient(135deg, #4f46e5, #7c3aed); color: white; border: none; border-radius: 10px; cursor: pointer; font-weight: 500; transition: all 0.3s; }
+        .btn-view:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4); }
+        .activity-list { display: flex; flex-direction: column; gap: 16px; }
+        .activity-item { display: flex; align-items: center; gap: 16px; padding: 16px; background: rgba(30, 41, 59, 0.5); border-radius: 16px; transition: all 0.3s; }
+        .activity-item:hover { background: rgba(79, 70, 229, 0.15); }
+        .activity-icon { width: 44px; height: 44px; background: rgba(79, 70, 229, 0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #4f46e5; font-size: 1.1rem; }
+        .activity-info { flex: 1; }
+        .activity-title { color: #e2e8f0; font-weight: 500; margin-bottom: 4px; }
         .activity-time { color: #64748b; font-size: 0.8rem; }
-        .sidebar-card { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(79, 70, 229, 0.2); border-radius: 20px; padding: 24px; }
-        .quick-link { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; color: #e2e8f0; transition: all 0.3s; margin-bottom: 8px; }
-        .quick-link:hover { background: rgba(79, 70, 229, 0.2); color: #4f46e5; }
-        .quick-link i { width: 20px; }
-        .logout-btn { width: 100%; padding: 12px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; border-radius: 12px; cursor: pointer; transition: all 0.3s; margin-top: 16px; }
+        .sidebar-card { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(20px); border: 1px solid rgba(79, 70, 229, 0.2); border-radius: 24px; padding: 28px; }
+        .quick-title { font-size: 1.1rem; color: white; font-weight: 600; margin-bottom: 20px; }
+        .quick-links { display: flex; flex-direction: column; gap: 12px; }
+        .quick-link { display: flex; align-items: center; gap: 14px; padding: 16px; background: rgba(30, 41, 59, 0.5); border-radius: 14px; color: #e2e8f0; transition: all 0.3s; text-decoration: none; }
+        .quick-link:hover { background: rgba(79, 70, 229, 0.2); color: #4f46e5; transform: translateX(4px); }
+        .quick-link i { width: 20px; color: #4f46e5; }
+        .logout-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px; margin-top: 20px; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; border-radius: 14px; cursor: pointer; transition: all 0.3s; font-weight: 500; }
         .logout-btn:hover { background: rgba(239, 68, 68, 0.2); }
     </style>
 </head>
@@ -61,70 +70,97 @@
     </nav>
     <section class="dashboard-page">
         <div class="container">
-            <div class="dashboard-header">
-                <h1 class="dashboard-title">Welcome back! 👋</h1>
-                <div class="user-profile">
-                    <div class="user-avatar">U</div>
-                    <span style="color: white;">User</span>
+            <div class="dash-header">
+                <div>
+                    <h1 class="dash-welcome">Welcome back! 👋</h1>
+                    <p class="dash-date" x-text="currentDate"></p>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar">A</div>
+                    <span style="color: white;">Admin</span>
                 </div>
             </div>
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-layer-group"></i></div>
-                    <div class="stat-value">12</div>
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-layer-group"></i></div>
+                        <span class="stat-trend trend-up">+12%</span>
+                    </div>
+                    <div class="stat-value">24</div>
                     <div class="stat-label">Total Templates</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-folder"></i></div>
-                    <div class="stat-value">8</div>
-                    <div class="stat-label">Projects</div>
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-folder-open"></i></div>
+                        <span class="stat-trend trend-up">+8%</span>
+                    </div>
+                    <div class="stat-value">16</div>
+                    <div class="stat-label">Active Projects</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-download"></i></div>
-                    <div class="stat-value">156</div>
-                    <div class="stat-label">Downloads</div>
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-download"></i></div>
+                        <span class="stat-trend trend-up">+24%</span>
+                    </div>
+                    <div class="stat-value">1,284</div>
+                    <div class="stat-label">Total Downloads</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-users"></i></div>
-                    <div class="stat-value">42</div>
-                    <div class="stat-label">Clients</div>
+                    <div class="stat-header">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <span class="stat-trend trend-up">+15%</span>
+                    </div>
+                    <div class="stat-value">89</div>
+                    <div class="stat-label">Total Clients</div>
                 </div>
             </div>
             <div class="content-grid">
-                <div class="card">
+                <div class="main-card">
                     <div class="card-header">
                         <h3 class="card-title">Recent Activity</h3>
-                        <button class="btn-sm">View All</button>
+                        <button class="btn-view">View All</button>
                     </div>
-                    <div class="activity-item">
-                        <div class="activity-icon"><i class="fas fa-download"></i></div>
-                        <div>
-                            <div class="activity-text">New template download</div>
-                            <div class="activity-time">2 hours ago</div>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon"><i class="fas fa-download"></i></div>
+                            <div class="activity-info">
+                                <div class="activity-title">New template downloaded</div>
+                                <div class="activity-time">2 minutes ago</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-icon"><i class="fas fa-user-plus"></i></div>
-                        <div>
-                            <div class="activity-text">New client registered</div>
-                            <div class="activity-time">5 hours ago</div>
+                        <div class="activity-item">
+                            <div class="activity-icon"><i class="fas fa-user-plus"></i></div>
+                            <div class="activity-info">
+                                <div class="activity-title">New client registered</div>
+                                <div class="activity-time">15 minutes ago</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="activity-item">
-                        <div class="activity-icon"><i class="fas fa-file-alt"></i></div>
-                        <div>
-                            <div class="activity-text">Project updated</div>
-                            <div class="activity-time">1 day ago</div>
+                        <div class="activity-item">
+                            <div class="activity-icon"><i class="fas fa-file-code"></i></div>
+                            <div class="activity-info">
+                                <div class="activity-title">Project completed</div>
+                                <div class="activity-time">1 hour ago</div>
+                            </div>
+                        </div>
+                        <div class="activity-item">
+                            <div class="activity-icon"><i class="fas fa-envelope"></i></div>
+                            <div class="activity-info">
+                                <div class="activity-title">New message received</div>
+                                <div class="activity-time">3 hours ago</div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div class="sidebar-card">
-                    <h3 class="card-title" style="margin-bottom: 16px;">Quick Actions</h3>
-                    <a href="web-template.html" class="quick-link"><i class="fas fa-plus"></i> New Template</a>
-                    <a href="project.html" class="quick-link"><i class="fas fa-folder-plus"></i> Add Project</a>
-                    <a href="contact.html" class="quick-link"><i class="fas fa-envelope"></i> Messages</a>
-                    <a href="admin.html" class="quick-link"><i class="fas fa-cog"></i> Settings</a>
-                    <button class="logout-btn" @click="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    <h3 class="quick-title">Quick Actions</h3>
+                    <div class="quick-links">
+                        <a href="web-template.html" class="quick-link"><i class="fas fa-plus-circle"></i> Add Template</a>
+                        <a href="project.html" class="quick-link"><i class="fas fa-folder-plus"></i> New Project</a>
+                        <a href="contact.html" class="quick-link"><i class="fas fa-inbox"></i> Messages</a>
+                        <a href="docs.html" class="quick-link"><i class="fas fa-book"></i> Documentation</a>
+                        <a href="admin.html" class="quick-link"><i class="fas fa-cog"></i> Settings</a>
+                    </div>
+                    <button class="logout-btn" @click="logout()"><i class="fas fa-sign-out-alt"></i> Sign Out</button>
                 </div>
             </div>
         </div>
@@ -132,16 +168,11 @@
     <script src="assets/js/3d/three.js"></script>
     <script src="assets/js/3d/card-3d.js"></script>
     <script src="assets/js/3d/smooth-scroll.js"></script>
-    <script src="assets/js/auth/firebase-config.js"></script>
-    <script src="assets/js/auth/auth.js"></script>
     <script>
         function dashboard() {
             return {
-                user: null, loading: true,
-                init() { 
-                    if (typeof initAdvanced3DBackground === 'function') initAdvanced3DBackground(); 
-                    this.loading = false;
-                },
+                currentDate: new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+                init() { if (typeof initAdvanced3DBackground === 'function') initAdvanced3DBackground(); },
                 logout() { window.location.href = 'login.html'; }
             };
         }
